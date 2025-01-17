@@ -1,0 +1,29 @@
+services:
+  php:
+    build:
+      context: ./docker/php
+      args:
+        - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+        - CURRENT_UID=${CURRENT_UID}
+        - CURRENT_GID=${CURRENT_GID}
+    volumes:
+      - './src:/var/www/html'
+    user: $CURRENT_UID:$CURRENT_GID
+    environment:
+      - CURRENT_UID=${CURRENT_UID}
+      - CURRENT_GID=${CURRENT_GID}
+  nginx:
+    image: nginx:latest
+    ports:
+      - '80:80'
+    volumes:
+      - './src:/var/www/html'
+      - './docker/nginx/conf.d:/etc/nginx/conf.d'
+  mysql:
+    image: mysql:8
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - './docker/volume/mysql:/var/lib/mysql'
